@@ -1,0 +1,85 @@
+<ng-container *ngIf="mode$ | async as mode">
+  <form
+    [formGroup]="authForm"
+    class="h-screen w-full surface-card flex flex-column justify-content-center align-items-center"
+  >
+    <!-- Welcome Text -->
+    <h2 class="text-white font-normal">Welcome Back</h2>
+
+    <!-- Email -->
+    <span class="p-float-label mt-4">
+      <input
+        id="email-input"
+        class="p-inputtext-lg"
+        type="text"
+        pInputText
+        placeholder="Email"
+        formControlName="email"
+      />
+      <small
+        *ngIf="
+          formControls['email'].dirty &&
+          formControls['email'].errors?.['required']
+        "
+        id="email-input-help"
+        class="p-error block"
+        >Email cannot be empty</small
+      >
+      <small
+        *ngIf="
+          formControls['email'].dirty &&
+          formControls['email'].errors?.['email']
+        "
+        id="email-input-help"
+        class="p-error block mt-1"
+        >Please enter a valid email</small
+      >
+    </span>
+
+    <!-- Password -->
+    <div class="mt-4">
+      <p-password
+        formControlName="password"
+        class="p-inputtext-lg float-input"
+        placeholder="Password"
+        [feedback]="mode == 'register'"
+      >
+        <ng-template *ngIf="mode == 'register'" pTemplate="header">
+          <h6>Pick a password</h6>
+        </ng-template>
+        <ng-template *ngIf="mode == 'register'" pTemplate="footer">
+          <p-divider></p-divider>
+          <p class="mt-2">Suggestions</p>
+          <ul class="pl-2 ml-2 mt-0" style="line-height: 1.5">
+            <li>At least one lowercase</li>
+            <li>At least one uppercase</li>
+            <li>At least one numeric</li>
+            <li>Minimum 8 characters</li>
+          </ul>
+        </ng-template>
+      </p-password>
+      <small
+        *ngIf="
+            formControls['password'].dirty &&
+            formControls['password'].errors?.['required']
+          "
+        id="email-input-help"
+        class="p-error block mt-1"
+        >Password cannot be empty</small
+      >
+    </div>
+
+    <!-- Submit Btn -->
+    <button
+      [disabled]="authForm.invalid"
+      pButton
+      type="button"
+      class="mt-4 p-button"
+      label="Login"
+      (click)="submit()"
+      [loading]="(loading | async)!"
+      loadingIcon="pi pi-spinner pi-spin"
+    ></button>
+    <p-messages></p-messages>
+  </form>
+</ng-container>

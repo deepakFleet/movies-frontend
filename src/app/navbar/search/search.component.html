@@ -1,0 +1,6 @@
+<p-autoComplete
+  [(ngModel)]="text"
+  [suggestions]="results"
+  (completeMethod)="search($event)"
+  (onSelect)="onSearchSelect($event)"
+></p-autoComplete>
