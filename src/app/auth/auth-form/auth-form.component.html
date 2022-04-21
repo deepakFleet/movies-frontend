@@ -1,8 +1,7 @@
 <ng-container *ngIf="mode$ | async as mode">
   <form
     [formGroup]="authForm"
-    class="h-screen w-full surface-card flex flex-column justify-content-center align-items-center"
-  >
+    class="h-screen w-full surface-card flex flex-column justify-content-center align-items-center">
     <!-- Welcome Text -->
     <h2 class="text-white font-normal">Welcome Back</h2>
 
@@ -14,8 +13,7 @@
         type="text"
         pInputText
         placeholder="First name"
-        formControlName="firstName"
-      />
+        formControlName="firstName" />
       <small
         *ngIf="
           formControls['firstName'].dirty &&
@@ -35,8 +33,7 @@
         type="text"
         pInputText
         placeholder="Last name"
-        formControlName="lastName"
-      />
+        formControlName="lastName" />
       <small
         *ngIf="
           formControls['lastName'].dirty &&
@@ -56,8 +53,7 @@
         type="text"
         pInputText
         placeholder="Email"
-        formControlName="email"
-      />
+        formControlName="email" />
       <small
         *ngIf="
           formControls['email'].dirty &&
@@ -84,12 +80,11 @@
         formControlName="password"
         class="p-inputtext-lg float-input"
         placeholder="Password"
-        [feedback]="mode == 'register'"
-      >
-        <ng-template *ngIf="mode == 'register'" pTemplate="header">
+        [feedback]="mode === 'register'">
+        <ng-template *ngIf="mode === 'register'" pTemplate="header">
           <h6>Pick a password</h6>
         </ng-template>
-        <ng-template *ngIf="mode == 'register'" pTemplate="footer">
+        <ng-template *ngIf="mode === 'register'" pTemplate="footer">
           <p-divider></p-divider>
           <p class="mt-2">Suggestions</p>
           <ul class="pl-2 ml-2 mt-0" style="line-height: 1.5">
@@ -120,8 +115,7 @@
       [label]="mode === 'login' ? 'Login' : 'Register'"
       (click)="submit()"
       [loading]="(loading | async)!"
-      loadingIcon="pi pi-spinner pi-spin"
-    ></button>
+      loadingIcon="pi pi-spinner pi-spin"></button>
     <p-messages></p-messages>
   </form>
 </ng-container>

@@ -3,15 +3,13 @@
     [label]="(getUserAvatarInitials$ | async)!"
     shape="circle"
     size="large"
-    (click)="menu.toggle($event)"
-  ></p-avatar>
+    (click)="menu.toggle($event)"></p-avatar>
 </ng-container>
 <ng-template #publicUser>
   <p-avatar
     icon="pi pi-user"
     shape="circle"
     size="large"
-    (click)="menu.toggle($event)"
-  ></p-avatar>
+    (click)="menu.toggle($event)"></p-avatar>
 </ng-template>
 <p-menu #menu [popup]="true" [model]="(items$ | async)!"></p-menu>

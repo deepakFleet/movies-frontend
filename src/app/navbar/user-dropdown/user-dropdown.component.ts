@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { filter, map, Observable } from 'rxjs';
+import { Observable, filter, map } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { User } from 'src/app/models/user.model';
 
@@ -17,7 +17,7 @@ export class UserDropdownComponent implements OnInit {
   }
 
   getUserAvatarInitials$ = this.user$.pipe(
-    filter((user) => Boolean(user)),
+    filter(user => Boolean(user)),
     map((user: User | undefined) => {
       return `${user?.firstName[0].toUpperCase()}${user?.lastName[0].toUpperCase()}`;
     })

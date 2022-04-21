@@ -2,10 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
+  Observable,
   from,
   map,
   mergeMap,
-  Observable,
   of,
   switchMap,
   take,
@@ -19,7 +19,7 @@ import { Movie } from './movie.model';
 })
 export class MovieService {
   movies$: BehaviorSubject<Movie[]> = new BehaviorSubject<Movie[]>([]);
-  randomColor$ = of('').pipe(map((res) => randDarkColor()));
+  randomColor$ = of('').pipe(map(res => randDarkColor()));
 
   constructor(private http: HttpClient) {}
 
@@ -27,7 +27,7 @@ export class MovieService {
     return this.http
       .get<Movie[]>('assets/mock/movies.json')
       .pipe(
-        map((res) => res.sort(() => Math.random() - Math.random()).slice(0, 20))
+        map(res => res.sort(() => Math.random() - Math.random()).slice(0, 20))
       );
   }
 }

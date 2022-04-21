@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { map, Observable, tap } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import { AuthService } from '../auth.service';
 
 @Component({
@@ -13,8 +13,8 @@ import { AuthService } from '../auth.service';
 })
 export class AuthFormComponent {
   mode$: Observable<'login' | 'register'> = this.route.data.pipe(
-    map((response) => response['mode']),
-    tap((mode) => this.buildForm(mode))
+    map(response => response['mode']),
+    tap(mode => this.buildForm(mode))
   );
   password: string | undefined;
   authForm: FormGroup = new FormGroup({});

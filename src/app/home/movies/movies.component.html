@@ -4,17 +4,15 @@
       *ngFor="let movie of movies$ | async"
       class="col-3 p-3 movie-card"
       [header]="movie.name"
-      [subheader]="movie.releaseDate.toString()"
-    >
+      [subheader]="movie.releaseDate.toString()">
       <ng-template pTemplate="header">
         <div
           class="movie-header"
-          [style.background-color]="movieService.randomColor$ | async"
-        ></div>
+          [style.background-color]="movieService.randomColor$ | async"></div>
       </ng-template>
 
       <span class="card-content text-gray-300">
-        {{ movie.genres.length > 0 ? movie.genres : "N/A" }}
+        {{ movie.genres.length > 0 ? movie.genres : 'N/A' }}
       </span>
 
       <ng-template pTemplate="footer">
@@ -23,8 +21,7 @@
           pRipple
           type="button"
           icon="pi pi-arrow-up"
-          class="p-button-rounded p-button-outlined"
-        ></button>
+          class="p-button-rounded p-button-outlined"></button>
       </ng-template>
     </p-card>
   </div>
