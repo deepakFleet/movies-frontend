@@ -16,16 +16,20 @@ import { PasswordModule } from 'primeng/password';
 import { DividerModule } from 'primeng/divider';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
+import { CardModule } from 'primeng/card';
+import { PanelMenuModule } from 'primeng/panelmenu';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
-import { SearchComponent } from './navbar/search/search.component';
 import { UserDropdownComponent } from './navbar/user-dropdown/user-dropdown.component';
 import { LoginComponent } from './auth/login/login.component';
 import { HomeComponent } from './home/home.component';
 import { AuthFormComponent } from './auth/auth-form/auth-form.component';
 import { MessageService } from 'primeng/api';
+import { MoviesComponent } from './home/movies/movies.component';
+import { SidebarComponent } from './home/sidebar/sidebar.component';
+import { SearchComponent } from './home/sidebar/search/search.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -40,6 +44,8 @@ const PrimeNgModules = [
   DividerModule,
   MessagesModule,
   MessageModule,
+  CardModule,
+  PanelMenuModule,
 ];
 
 @NgModule({
@@ -51,6 +57,8 @@ const PrimeNgModules = [
     LoginComponent,
     HomeComponent,
     AuthFormComponent,
+    MoviesComponent,
+    SidebarComponent,
   ],
   imports: [
     BrowserModule,

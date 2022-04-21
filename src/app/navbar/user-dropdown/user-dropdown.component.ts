@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
+import { filter, map, Observable } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth.service';
+import { User } from 'src/app/models/user.model';
 
 @Component({
   selector: 'app-user-dropdown',
@@ -9,19 +12,39 @@ import { MenuItem } from 'primeng/api';
 export class UserDropdownComponent implements OnInit {
   items: MenuItem[] = [];
 
-  constructor() {}
+  get user$(): Observable<User | undefined> {
+    return this.authService.user;
+  }
+
+  getUserAvatarInitials$ = this.user$.pipe(
+    filter((user) => Boolean(user)),
+    map((user: User | undefined) => {
+      return `${user?.firstName[0].toUpperCase()}${user?.lastName[0].toUpperCase()}`;
+    })
+  );
+
+  items$: Observable<MenuItem[]> = this.user$.pipe(
+    map((user: User | undefined) => {
+      return [
+        {
+          label: user ? 'Logout' : 'Login',
+          icon: 'pi pi-external-link',
+          url: '/login',
+          command: () => {
+            !user ? this.authService.setUser(undefined) : null;
+          },
+        },
+        {
+          label: 'Router',
+          icon: 'pi pi-upload',
+        },
+      ];
+    })
+  );
+
+  constructor(public authService: AuthService) {}
 
   ngOnInit(): void {
-    this.items = [
-      {
-        label: 'Login',
-        icon: 'pi pi-external-link',
-        url: 'http://angular.io',
-      },
-      {
-        label: 'Router',
-        icon: 'pi pi-upload',
-      },
-    ];
+    this.items = [];
   }
 }

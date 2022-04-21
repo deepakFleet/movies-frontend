@@ -6,6 +6,48 @@
     <!-- Welcome Text -->
     <h2 class="text-white font-normal">Welcome Back</h2>
 
+    <!-- First Name -->
+    <span *ngIf="mode === 'register'" class="p-float-label mt-4">
+      <input
+        id="firstName-input"
+        class="p-inputtext-lg"
+        type="text"
+        pInputText
+        placeholder="First name"
+        formControlName="firstName"
+      />
+      <small
+        *ngIf="
+          formControls['firstName'].dirty &&
+          formControls['firstName'].errors?.['required']
+        "
+        id="firstName-input-help"
+        class="p-error block"
+        >First name cannot be empty</small
+      >
+    </span>
+
+    <!-- Last Name -->
+    <span *ngIf="mode === 'register'" class="p-float-label mt-4">
+      <input
+        id="lastName-input"
+        class="p-inputtext-lg"
+        type="text"
+        pInputText
+        placeholder="Last name"
+        formControlName="lastName"
+      />
+      <small
+        *ngIf="
+          formControls['lastName'].dirty &&
+          formControls['lastName'].errors?.['required']
+        "
+        id="lastName-input-help"
+        class="p-error block"
+        >Last name cannot be empty</small
+      >
+    </span>
+
     <!-- Email -->
     <span class="p-float-label mt-4">
       <input
@@ -75,7 +117,7 @@
       pButton
       type="button"
       class="mt-4 p-button"
-      label="Login"
+      [label]="mode === 'login' ? 'Login' : 'Register'"
       (click)="submit()"
       [loading]="(loading | async)!"
       loadingIcon="pi pi-spinner pi-spin"

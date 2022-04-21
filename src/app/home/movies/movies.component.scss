@@ -1,0 +1,36 @@
+.movie-header {
+  height: 5px;
+}
+
+::ng-deep .p-card,
+::ng-deep .p-card-header,
+.movie-header {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+::ng-deep .p-card {
+  box-shadow: none;
+  background: transparent;
+  border-left: 1px solid rgba($color: #fff, $alpha: 0.1);
+  border-right: 1px solid rgba($color: #fff, $alpha: 0.1);
+  border-bottom: 1px solid rgba($color: #fff, $alpha: 0.1);
+
+  .p-card-content {
+    padding: 0px;
+  }
+}
+
+::ng-deep .p-card-title {
+  font-size: 1rem !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.movies-container {
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+}

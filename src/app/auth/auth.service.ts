@@ -4,8 +4,12 @@ import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { BehaviorSubject, firstValueFrom, Observable, of } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
+import { LoginResponse } from '../models/api-response';
+import { User } from '../models/user.model';
 
+const BASE_URL = environment.BASE_URL;
 @Injectable({
   providedIn: 'root',
 })
@@ -14,6 +18,8 @@ export class AuthService {
     new BehaviorSubject<boolean>(false);
   private readonly loginError$: BehaviorSubject<boolean> =
     new BehaviorSubject<boolean>(false);
+  private readonly user$: BehaviorSubject<User | undefined> =
+    new BehaviorSubject<User | undefined>(undefined);
 
   constructor(
     private messageService: MessageService,
@@ -29,6 +35,14 @@ export class AuthService {
     return this.loginError$.asObservable();
   }
 
+  get user() {
+    return this.user$.asObservable();
+  }
+
+  public setUser(user: User | undefined) {
+    this.user$.next(user);
+  }
+
   public toggleLoadingState(): void {
     this.loading$.next(!this.loading$.getValue());
   }
@@ -40,38 +54,52 @@ export class AuthService {
   public submit(formGroup: FormGroup): void {
     formGroup.get('formType')?.value == 'login'
       ? this.login(formGroup)
-      : this.register();
+      : this.register(formGroup);
   }
 
-  public register(): void {}
-
-  public login(formGroup: FormGroup) {
+  public register(formGroup: FormGroup): void {
     this.toggleLoadingState();
-    let loginAttempt = firstValueFrom(
-      this.http.get('assets/mock/login.json').pipe(
-        map((response: any) => {
-          return (
-            response.matchingCredentials.email.trim() ===
-              formGroup.get('email')?.value &&
-            response.matchingCredentials.password.trim() ===
-              formGroup.get('password')?.value
-          );
-        })
-      )
-    );
-    loginAttempt.then((success: boolean) => {
-      setTimeout(() => {
-        this.toggleLoadingState();
-        if (!success) {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Invalid Credentials!',
-            detail: 'Please try again',
-          });
-        } else {
-          this.router.navigate(['home']);
-        }
-      }, 2000);
+    firstValueFrom(
+      this.http.post(`${BASE_URL}/auth/signup`, {
+        email: formGroup.get('email')?.value,
+        password: formGroup.get('password')?.value,
+        firstName: formGroup.get('firstName')?.value,
+        lastName: formGroup.get('lastName')?.value,
+      })
+    ).then((response) => {
+      this.router.navigate(['login']);
+    });
+  }
+
+  public login(formGroup: FormGroup): void {
+    this.toggleLoadingState();
+    firstValueFrom(
+      this.http
+        .post<LoginResponse>(
+          `${BASE_URL}/auth/signin
+      `,
+          {
+            username: formGroup.get('email')?.value,
+            password: formGroup.get('password')?.value,
+          }
+        )
+        .pipe(catchError((res) => of(res)))
+    ).then((response: LoginResponse) => {
+      this.toggleLoadingState();
+      if (response.status == 500 || response.status == 401) {
+        this.setInvalidCredentialMessage();
+      } else {
+        this.setUser(response);
+        this.router.navigate(['home']);
+      }
+    });
+  }
+
+  public setInvalidCredentialMessage(): void {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Invalid Credentials!',
+      detail: 'Please try again',
     });
   }
 }
