@@ -34,3 +34,18 @@
   height: calc(100vh - 64px);
   overflow-y: auto;
 }
+
+.movie-controller-bar {
+  z-index: 100;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 20px 0;
+}
+
+::ng-deep .genre-dropdown {
+  &.p-dropdown {
+    width: 250px;
+  }
+}

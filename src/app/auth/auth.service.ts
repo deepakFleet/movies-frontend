@@ -60,7 +60,7 @@ export class AuthService {
   public register(formGroup: FormGroup): void {
     this.toggleLoadingState();
     firstValueFrom(
-      this.http.post(`${BASE_URL}/auth/signup`, {
+      this.http.post(`${BASE_URL}/api/auth/signup`, {
         email: formGroup.get('email')?.value,
         password: formGroup.get('password')?.value,
         firstName: formGroup.get('firstName')?.value,
@@ -76,7 +76,7 @@ export class AuthService {
     firstValueFrom(
       this.http
         .post<LoginResponse>(
-          `${BASE_URL}/auth/signin
+          `${BASE_URL}/api/auth/signin
       `,
           {
             username: formGroup.get('email')?.value,
