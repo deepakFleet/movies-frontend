@@ -82,6 +82,11 @@ export class AuthService {
       )
     ).then((response: any) => {
       if (response.message == 'User registered successfully!') {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Registered user successfully',
+        });
         this.login(
           new FormGroup({
             email: new FormControl(formGroup.get('email')?.value),
@@ -126,6 +131,11 @@ export class AuthService {
         this.setUser(response);
         localStorage.setItem('user', JSON.stringify(response));
         this.router.navigate(['home']);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Logged in successfully',
+        });
       }
     });
   }

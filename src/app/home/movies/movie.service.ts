@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { MessageService } from 'primeng/api';
 import {
   BehaviorSubject,
   combineLatest,
@@ -23,7 +24,11 @@ const BASE_URL = environment.BASE_URL;
   providedIn: 'root',
 })
 export class MovieService {
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+    private messageService: MessageService
+  ) {}
 
   randomColor$ = of('').pipe(map(res => randDarkColor()));
   genres$ = this.http
@@ -109,6 +114,11 @@ export class MovieService {
         }
       )
     ).then(res => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: `${vote ? 'Upvoted' : 'Downvoted'} movie successfully`,
+      });
       this.refreshMovies$.next(true);
     });
   }
@@ -134,6 +144,11 @@ export class MovieService {
         }
       )
     ).then(res => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Added Movie successfully',
+      });
       this.refreshMovies$.next(true);
     });
   }
@@ -153,7 +168,13 @@ export class MovieService {
           }),
         }
       )
-    );
+    ).then(res => {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Marked favourite(s) successfully',
+      });
+    });
   }
 
   getRecommendedMovies() {
@@ -196,6 +217,11 @@ export class MovieService {
       )
     ).then(res => {
       this.refreshMovies$.next(true);
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Added review successfully',
+      });
     });
   }
 }

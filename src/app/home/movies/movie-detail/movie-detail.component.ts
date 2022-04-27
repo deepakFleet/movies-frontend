@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { of, switchMap } from 'rxjs';
+import { switchMap } from 'rxjs';
 import { MovieService } from '../movie.service';
 
 @Component({
@@ -19,6 +19,5 @@ export class MovieDetailComponent {
     private route: ActivatedRoute,
     private movieServie: MovieService
   ) {}
-
-  ngOnInit(): void {}
+  
 }

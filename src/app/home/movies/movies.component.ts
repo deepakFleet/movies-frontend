@@ -1,5 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, of, switchMap } from 'rxjs';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BehaviorSubject, firstValueFrom, of, switchMap } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { AddMovieFormComponent } from 'src/app/components/add-movie-form/add-movie-form.component';
 import { Genre, Movie } from './movie.model';
@@ -54,7 +55,10 @@ const VIEW_OPTIONS: Array<DropDownOption> = [
 export class MoviesComponent implements OnInit {
   constructor(
     public movieService: MovieService,
-    public authService: AuthService
+    public authService: AuthService,
+    public route: ActivatedRoute,
+    public elRef: ElementRef,
+    public router: Router
   ) {}
 
   @ViewChild(AddMovieFormComponent, { static: false })
@@ -140,9 +144,11 @@ export class MoviesComponent implements OnInit {
   onSortByChange(value: DropDownOption) {
     this.movieService.sortBy$.next(value.code);
   }
+
   onSortOrderChange(value: DropDownOption) {
     this.movieService.sortOrder$.next(value.code);
   }
+
   onFilteredGenreChange(value: Genre) {
     this.movieService.filteredGenre$.next(value);
   }
@@ -168,6 +174,27 @@ export class MoviesComponent implements OnInit {
     favouriteGenres.then(res => {
       this.favouriteGenres$.next(res);
     });
+  }
+
+  openFavDropdown() {
+    setTimeout(() => {
+      const yourDropdown =
+        this.elRef.nativeElement.querySelector('.genre-dropdown');
+      if (yourDropdown) {
+        yourDropdown.click();
+      }
+
+      setTimeout(() => {
+        const tooltipToFocus =
+          this.elRef.nativeElement.querySelector('.star-btn');
+        tooltipToFocus.dispatchEvent(new Event('mouseenter'));
+      }, 100);
+    }, 100);
+  }
+
+  showAddFavourites() {
+    this.viewMode = [...VIEW_OPTIONS].find(res => res.code === 'all');
+    this.openFavDropdown();
   }
 
   writeReview() {

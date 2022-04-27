@@ -37,6 +37,7 @@
       <p-dropdown
         styleClass="genre-dropdown"
         class="ml-2"
+        #favouriteGenreDropdown
         (onChange)="onFilteredGenreChange($event.value)"
         [options]="groupedGenres$ | async"
         [(ngModel)]="genreSelected"
@@ -45,7 +46,7 @@
         [group]="(favouriteGenres$ | async).length"
         [showClear]="false">
         <ng-template pTemplate="selectedItem">
-          <div class="country-item country-item-value" *ngIf="genreSelected">
+          <div class="genre-item genre-item-value" *ngIf="genreSelected">
             <div>{{ genreSelected.genre }}</div>
           </div>
         </ng-template>
@@ -69,7 +70,7 @@
                     ? 'Mark Favourite'
                     : 'Únmark Favourite'
                 "
-                class="p-button-rounded p-button-text"
+                class="p-button-rounded p-button-text star-btn"
                 [ngClass]="{
                   'p-button-secondary': genreSelected === genre
                 }"></button>
@@ -159,10 +160,21 @@
             viewMode?.code === 'recommended' && recommendedMovies.length === 0
           "
           class="w-full flex flex-row justify-content-center mt-4">
-          <p-message
-            severity="info"
-            text="Please favourite some genres to see recommended movies"
-            styleClass="mt-4 w-full"></p-message>
+          <div
+            class="flex flex-column justify-content-center align-items-center">
+            <p-message
+              severity="info"
+              text="Please favourite some genres to see recommended movies"
+              styleClass="mt-4 w-full"></p-message>
+            <button
+              pButton
+              pRipple
+              icon="pi pi-plus"
+              type="button"
+              label="Add Favourites"
+              (click)="showAddFavourites()"
+              class="p-button-help inline-block w-5 mt-2"></button>
+          </div>
         </div>
       </ng-container>
     </ng-container>
