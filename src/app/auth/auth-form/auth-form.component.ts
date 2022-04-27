@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { MessageService } from 'primeng/api';
-import { Observable, map, tap } from 'rxjs';
+import { map, Observable, tap } from 'rxjs';
 import { AuthService } from '../auth.service';
 
 @Component({

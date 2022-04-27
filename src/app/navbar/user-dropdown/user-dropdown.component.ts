@@ -31,12 +31,8 @@ export class UserDropdownComponent implements OnInit {
           icon: 'pi pi-external-link',
           url: '/login',
           command: () => {
-            !user ? this.authService.setUser(undefined) : null;
+            user ? this.authService.logoutUser() : null;
           },
-        },
-        {
-          label: 'Router',
-          icon: 'pi pi-upload',
         },
       ];
     })

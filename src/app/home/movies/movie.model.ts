@@ -1,9 +1,14 @@
 export interface Movie {
   id: string;
   name: string;
-  genres: string[];
+  genres: Genre[];
   releaseDate: Date;
-  upvotes: number;
-  downvotes: number;
+  upVotes: number;
+  downVotes: number;
   reviews: string[];
+}
+
+export interface Genre {
+  id: number;
+  genre: string;
 }

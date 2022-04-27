@@ -7,29 +7,38 @@ import { MessageService } from 'primeng/api';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
+import { CalendarModule } from 'primeng/calendar';
 import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
+import { DialogModule } from 'primeng/dialog';
 import { DividerModule } from 'primeng/divider';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 import { MenuModule } from 'primeng/menu';
 import { MenubarModule } from 'primeng/menubar';
 import { MessageModule } from 'primeng/message';
 import { MessagesModule } from 'primeng/messages';
+import { MultiSelectModule } from 'primeng/multiselect';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { PasswordModule } from 'primeng/password';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { SelectButtonModule } from 'primeng/selectbutton';
 import { StyleClassModule } from 'primeng/styleclass';
 import { TooltipModule } from 'primeng/tooltip';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { ChipModule } from 'primeng/chip';
+
 import { AuthFormComponent } from './auth/auth-form/auth-form.component';
-import { LoginComponent } from './auth/login/login.component';
+import { AddMovieFormComponent } from './components/add-movie-form/add-movie-form.component';
 import { HomeComponent } from './home/home.component';
 import { MoviesComponent } from './home/movies/movies.component';
 import { SearchComponent } from './home/sidebar/search/search.component';
 import { SidebarComponent } from './home/sidebar/sidebar.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { UserDropdownComponent } from './navbar/user-dropdown/user-dropdown.component';
+import { MovieDetailComponent } from './home/movies/movie-detail/movie-detail.component';
 
 const PrimeNgModules = [
   MenubarModule,
@@ -46,8 +55,15 @@ const PrimeNgModules = [
   MessageModule,
   CardModule,
   PanelMenuModule,
+  InputTextareaModule,
   DropdownModule,
   TooltipModule,
+  DialogModule,
+  MultiSelectModule,
+  ChipModule,
+  CalendarModule,
+  ProgressSpinnerModule,
+  SelectButtonModule,
 ];
 
 @NgModule({
@@ -56,11 +72,12 @@ const PrimeNgModules = [
     NavbarComponent,
     SearchComponent,
     UserDropdownComponent,
-    LoginComponent,
     HomeComponent,
     AuthFormComponent,
     MoviesComponent,
     SidebarComponent,
+    AddMovieFormComponent,
+    MovieDetailComponent,
   ],
   imports: [
     BrowserModule,

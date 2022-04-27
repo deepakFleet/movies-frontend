@@ -2,39 +2,60 @@
   <div
     class="movie-controller-bar bg-primary-reverse shadow-1 flex justify-content-around flex-row w-full">
     <div class="flex flex-row flex-1 pl-3">
+      <p-selectButton
+        *ngIf="user$ | async"
+        class="mr-2"
+        [options]="viewOptions"
+        [(ngModel)]="viewMode"
+        (onChange)="viewModeChange()"
+        placeholder="View Mode"
+        optionLabel="name"></p-selectButton>
+      <p-button
+        *ngIf="user$ | async"
+        (onClick)="showAddMovieModal()"
+        styleClass="p-button-raised mr-2">
+        <i class="pi pi-plus"></i>
+        <span class="ml-2 font-bold">Add Movie</span>
+      </p-button>
+    </div>
+    <div *ngIf="viewMode?.code === 'all'" class="flex">
       <p-dropdown
+        (onChange)="onSortByChange($event.value)"
         [options]="sortByOptions"
         [(ngModel)]="sortedBy"
         placeholder="Sort By"
         optionLabel="name"
-        [showClear]="true"></p-dropdown>
+        [showClear]="false"></p-dropdown>
       <p-dropdown
         class="ml-2"
+        (onChange)="onSortOrderChange($event.value)"
         [options]="sortOrderOptions"
         [(ngModel)]="sortedOrder"
         placeholder="Sort Order"
         optionLabel="name"
-        [showClear]="true"></p-dropdown>
+        [showClear]="false"></p-dropdown>
       <p-dropdown
         styleClass="genre-dropdown"
         class="ml-2"
+        (onChange)="onFilteredGenreChange($event.value)"
         [options]="groupedGenres$ | async"
         [(ngModel)]="genreSelected"
         placeholder="Filter by genre"
-        optionLabel="name"
+        optionLabel="genre"
         [group]="(favouriteGenres$ | async).length"
         [showClear]="false">
         <ng-template pTemplate="selectedItem">
           <div class="country-item country-item-value" *ngIf="genreSelected">
-            <div>{{ genreSelected.name }}</div>
+            <div>{{ genreSelected.genre }}</div>
           </div>
         </ng-template>
         <ng-template let-genre pTemplate="item">
           <div class="country-item">
             <div
               class="flex justify-content-between flex-row align-items-center">
-              <div>{{ genre.name }}</div>
+              <div>{{ genre.genre }}</div>
               <button
+                *ngIf="user$ | async"
                 pButton
                 (click)="onFavouriteClick($event, genre)"
                 type="button"
@@ -56,42 +77,140 @@
           </div>
         </ng-template>
       </p-dropdown>
-    </div>
-    <div>
-      <p-dropdown
-        class="mr-2"
-        [options]="viewOptions"
-        [(ngModel)]="viewMode"
-        placeholder="Sort Order"
-        optionLabel="name"
-        [showClear]="false"></p-dropdown>
-      <app-search></app-search>
+      <span class="p-input-icon-right mr-3 ml-2">
+        <i class="pi pi-search"></i>
+        <input
+          type="text"
+          class="w-full"
+          (input)="onSearchInputChange()"
+          [(ngModel)]="searchTerm"
+          pInputText
+          placeholder="Search movies" />
+      </span>
     </div>
   </div>
   <div class="pt-2 grid grid-nogutter">
-    <p-card
-      *ngFor="let movie of movies$ | async"
-      class="col-3 p-3 movie-card"
-      [header]="movie.name"
-      [subheader]="movie.releaseDate.toString()">
-      <ng-template pTemplate="header">
+    <ng-container *ngIf="movies$ | async as movies; else movieLoadSpinner">
+      <ng-container *ngIf="movies.length; else noMoviePlaceholder">
+        <p-card
+          *ngFor="
+            let movie of viewMode?.code === 'all'
+              ? (movies$ | async)
+              : recommendedMovies
+          "
+          class="col-3 p-3 movie-card"
+          [subheader]="(movie.releaseDate.toString() | date)!">
+          <ng-template pTemplate="header">
+            <div
+              class="movie-header"
+              [style.background-color]="
+                movieService.randomColor$ | async
+              "></div>
+            <h4
+              class="mt-3 ml-4 mb-0 -mb-2 cursor-pointer"
+              [routerLink]="'/movie/' + movie.id">
+              {{ movie.name }}
+            </h4>
+          </ng-template>
+
+          <span class="card-content text-gray-300">
+            {{
+              movie.genres.length
+                ? getFormattedMovieGenres(movie.genres)
+                : 'N/A'
+            }}
+          </span>
+
+          <ng-template *ngIf="user$ | async" pTemplate="footer">
+            <div class="flex flex-row align-items-center">
+              <button
+                pButton
+                pRipple
+                type="button"
+                icon="pi pi-arrow-up"
+                pTooltip="Upvote Movie"
+                (click)="voteMovie(movie, true)"
+                class="p-button-rounded p-button-outlined"></button>
+              <span class="ml-1">{{ movie.upVotes }}</span>
+              <button
+                pButton
+                pRipple
+                type="button"
+                icon="pi pi-arrow-down"
+                pTooltip="Downvote Movie"
+                (click)="voteMovie(movie, false)"
+                class="p-button-rounded p-button-outlined ml-4"></button>
+              <span class="ml-1">{{ movie.downVotes }}</span>
+              <button
+                pButton
+                pRipple
+                type="button"
+                icon="pi pi-pencil"
+                pTooltip="Write a review"
+                (click)="
+                  showWriteReviewModal = true; selectedMovieForReview = movie
+                "
+                class="p-button-rounded p-button-outlined ml-4"></button>
+            </div>
+          </ng-template>
+        </p-card>
         <div
-          class="movie-header"
-          [style.background-color]="movieService.randomColor$ | async"></div>
-      </ng-template>
-
-      <span class="card-content text-gray-300">
-        {{ movie.genres.length > 0 ? movie.genres : 'N/A' }}
-      </span>
-
-      <ng-template pTemplate="footer">
-        <button
-          pButton
-          pRipple
-          type="button"
-          icon="pi pi-arrow-up"
-          class="p-button-rounded p-button-outlined"></button>
-      </ng-template>
-    </p-card>
+          *ngIf="
+            viewMode?.code === 'recommended' && recommendedMovies.length === 0
+          "
+          class="w-full flex flex-row justify-content-center mt-4">
+          <p-message
+            severity="info"
+            text="Please favourite some genres to see recommended movies"
+            styleClass="mt-4 w-full"></p-message>
+        </div>
+      </ng-container>
+    </ng-container>
+    <ng-template #noMoviePlaceholder>
+      <div class="p-4 w-full flex flex-row justify-content-center">
+        <p-message
+          severity="info"
+          text="No movies match the selected criteria"
+          styleClass="mt-4 w-full"></p-message>
+      </div>
+    </ng-template>
+    <ng-template #movieLoadSpinner>
+      <div class="w-full flex flex-row justify-content-center mt-4">
+        <p-progressSpinner></p-progressSpinner>
+      </div>
+    </ng-template>
   </div>
 </div>
+
+<p-dialog
+  *ngIf="user$ | async"
+  header="Add Movie"
+  [(visible)]="showAddMovieModalBinding"
+  [style]="{ width: '30vw' }"
+  [modal]="true">
+  <app-add-movie-form></app-add-movie-form>
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Add"
+      (onClick)="dispatchCtaAction()"
+      styleClass="p-button-raised"></p-button>
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  header="Add Review"
+  [(visible)]="showWriteReviewModal"
+  [style]="{ width: '30vw' }"
+  [modal]="true">
+  <textarea
+    styleClass="w-full"
+    pInputTextarea
+    [(ngModel)]="movieReview"></textarea>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Add"
+      (onClick)="writeReview()"
+      styleClass="p-button-raised"></p-button>
+  </ng-template>
+</p-dialog>

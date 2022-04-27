@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { BehaviorSubject, of, switchMap } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth.service';
+import { AddMovieFormComponent } from 'src/app/components/add-movie-form/add-movie-form.component';
+import { Genre, Movie } from './movie.model';
 import { MovieService } from './movie.service';
 
 export interface DropDownOption {
@@ -10,15 +13,15 @@ export interface DropDownOption {
 const SORT_BY_OPTIONS: Array<DropDownOption> = [
   {
     name: 'Upvotes',
-    code: 'UV',
+    code: 'upVotes',
   },
   {
     name: 'Downvotes',
-    code: 'DV',
+    code: 'downVotes',
   },
   {
     name: 'Release Date',
-    code: 'RD',
+    code: 'releaseDate',
   },
 ];
 const SORT_ORDER_OPTIONS: Array<DropDownOption> = [
@@ -48,12 +51,23 @@ const VIEW_OPTIONS: Array<DropDownOption> = [
   templateUrl: './movies.component.html',
   styleUrls: ['./movies.component.scss'],
 })
-export class MoviesComponent {
-  constructor(public movieService: MovieService) {}
-  movies$ = this.movieService.getMovies();
+export class MoviesComponent implements OnInit {
+  constructor(
+    public movieService: MovieService,
+    public authService: AuthService
+  ) {}
+
+  @ViewChild(AddMovieFormComponent, { static: false })
+  ADD_MOVIE_FORM!: AddMovieFormComponent;
+  dialogCtaDispatcher$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+    false
+  );
+  movies$ = this.movieService.movies$;
   genres$ = this.movieService.genres$;
   favouriteGenres$: BehaviorSubject<any> = new BehaviorSubject([]);
-  genreSelected: DropDownOption | null = null;
+  showAddMovieModalBinding: boolean = false;
+  user$ = this.authService.user;
+  genreSelected: Genre | null = null;
   sortByOptions: Array<DropDownOption> = SORT_BY_OPTIONS;
   sortOrderOptions: Array<DropDownOption> = SORT_ORDER_OPTIONS;
   sortedBy: DropDownOption | null = null;
@@ -62,9 +76,12 @@ export class MoviesComponent {
     res => res.code === 'all'
   );
   viewOptions: Array<DropDownOption> = VIEW_OPTIONS;
-
+  searchTerm: string = '';
+  showWriteReviewModal = false;
+  movieReview: string = '';
+  selectedMovieForReview = null;
   groupedGenres$ = this.genres$.pipe(
-    switchMap((genres: any) =>
+    switchMap((genres: Genre[]) =>
       this.favouriteGenres$.pipe(
         switchMap((favourites: any) => {
           if (favourites.length) {
@@ -78,7 +95,10 @@ export class MoviesComponent {
                 label: 'Other',
                 value: 'normal',
                 items: genres.filter(
-                  (genre: any) => favourites.indexOf(genre) == -1
+                  (genre: Genre) =>
+                    !favourites.find(
+                      (favourite: Genre) => favourite.id == genre.id
+                    )
                 ),
               },
             ];
@@ -90,8 +110,9 @@ export class MoviesComponent {
       )
     )
   );
+  recommendedMovies: Array<any> = [];
 
-  onFavouriteClick(event: any, genre: any) {
+  onFavouriteClick(event: any, genre: Genre) {
     event.stopPropagation();
     let currentVal = this.favouriteGenres$.getValue();
     if (currentVal.indexOf(genre) == -1) {
@@ -100,5 +121,58 @@ export class MoviesComponent {
       currentVal.splice(currentVal.indexOf(genre), 1);
       this.favouriteGenres$.next(currentVal);
     }
+    this.movieService.addFavouriteGenre(this.favouriteGenres$.value);
+  }
+
+  showAddMovieModal() {
+    this.showAddMovieModalBinding = true;
+  }
+
+  dispatchCtaAction() {
+    this.ADD_MOVIE_FORM.onListenerTriggered();
+    this.showAddMovieModalBinding = false;
+  }
+
+  getFormattedMovieGenres(genres: Genre[]) {
+    return genres.map((genre: Genre) => genre.genre).join(',');
+  }
+
+  onSortByChange(value: DropDownOption) {
+    this.movieService.sortBy$.next(value.code);
+  }
+  onSortOrderChange(value: DropDownOption) {
+    this.movieService.sortOrder$.next(value.code);
+  }
+  onFilteredGenreChange(value: Genre) {
+    this.movieService.filteredGenre$.next(value);
+  }
+
+  onSearchInputChange() {
+    this.movieService.movieSearchTerm$.next(this.searchTerm);
+  }
+
+  voteMovie(movie: Movie, vote: boolean) {
+    this.movieService.voteMovie(movie, vote);
+  }
+
+  viewModeChange() {
+    if (this.viewMode?.code == 'recommended') {
+      this.movieService.getRecommendedMovies().then((res: any) => {
+        this.recommendedMovies = res.content;
+      });
+    }
+  }
+
+  ngOnInit(): void {
+    let favouriteGenres = this.movieService.getFavouriteGenres();
+    favouriteGenres.then(res => {
+      this.favouriteGenres$.next(res);
+    });
+  }
+
+  writeReview() {
+    this.movieService.addReview(this.selectedMovieForReview, this.movieReview);
+    this.movieReview = '';
+    this.showWriteReviewModal = false;
   }
 }

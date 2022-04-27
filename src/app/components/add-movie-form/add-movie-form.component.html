@@ -1,0 +1,17 @@
+<form [formGroup]="addMovieForm" class="flex flex-column">
+  <h5 class="mb-1">Name</h5>
+  <input type="text" formControlName="name" pInputText form />
+  <h5 class="mb-1 mt-4">Genres</h5>
+  <p-multiSelect
+    styleClass="w-full"
+    [options]="genres$ | async"
+    appendTo="body"
+    formControlName="genres"
+    optionLabel="genre"></p-multiSelect>
+  <h5 class="mb-1 mt-4">Release Date</h5>
+  <p-calendar
+    styleClass="w-full mb-4"
+    formControlName="releaseDate"
+    dateFormat="yy-mm-dd"
+    appendTo="body"></p-calendar>
+</form>
