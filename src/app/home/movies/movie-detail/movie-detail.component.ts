@@ -19,5 +19,4 @@ export class MovieDetailComponent {
     private route: ActivatedRoute,
     private movieServie: MovieService
   ) {}
-  
 }

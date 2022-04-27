@@ -11,7 +11,7 @@ import {
   Observable,
   of,
   switchMap,
-  tap
+  tap,
 } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { randDarkColor } from 'src/app/utils/color-generator';
